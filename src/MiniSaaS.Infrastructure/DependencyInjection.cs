@@ -16,10 +16,14 @@ public static class DependencyInjection
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection")));
 
-        services.AddScoped<ITenantContext, TenantContext>();
+        services.AddScoped<TenantContext>();
+
+        services.AddScoped<ITenantContext>(sp => sp.GetRequiredService<TenantContext>());
+
+        services.AddScoped<ITenantContextAccessor>(sp => sp.GetRequiredService<TenantContext>());
 
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-
+        services.AddScoped<ITenantReader, TenantReader>();
         services.AddScoped<IUnitOfWork, UnitOfWorkImplementation>();
 
         return services;

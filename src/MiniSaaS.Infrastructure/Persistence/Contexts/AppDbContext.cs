@@ -14,17 +14,18 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options,ICurrentUserService currentUserService,
                                 ITenantContext tenantContext) : base(options)
     {
-        _currentUserService = currentUserService;
-        _tenantContext = tenantContext;
+        _currentUserService =  currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+
+        _tenantContext = tenantContext ?? throw new ArgumentNullException(nameof(tenantContext));
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         modelBuilder.Entity<User>()
-            .HasQueryFilter(x =>
-                _tenantContext.TenantId == null ||
-                x.TenantId == _tenantContext.TenantId);
+         .HasQueryFilter(x =>
+             x.TenantId == _tenantContext.TenantId &&
+             x.IsActive);
 
         base.OnModelCreating(modelBuilder);
     }
