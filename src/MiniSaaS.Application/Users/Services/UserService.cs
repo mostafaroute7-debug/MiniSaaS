@@ -1,4 +1,5 @@
-﻿using MiniSaaS.Application.Common.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using MiniSaaS.Application.Common.Interfaces;
 using MiniSaaS.Application.Common.Mapping;
 using MiniSaaS.Application.Common.Models;
 using MiniSaaS.Application.Users.DTOs;
@@ -10,18 +11,21 @@ public sealed class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
+    private readonly ILogger<UserService> _logger;
 
     public UserService(
         IUnitOfWork unitOfWork,
-        ITenantContext tenantContext)
+        ITenantContext tenantContext,
+        ILogger<UserService> logger)
     {
         _unitOfWork = unitOfWork;
         _tenantContext = tenantContext;
+        _logger = logger;
     }
 
     public async Task<ResultDto<PagedResultDto<UserResponse>>> GetAllAsync(
-         PaginationRequest request,
-         CancellationToken cancellationToken = default)
+        PaginationRequest request,
+        CancellationToken cancellationToken = default)
     {
         var result = await _unitOfWork
             .Repository<User>()
@@ -46,13 +50,14 @@ public sealed class UserService : IUserService
     }
 
     public async Task<ResultDto<UserResponse>> CreateAsync(
-     CreateUserRequest request,
-     CancellationToken cancellationToken = default)
+        CreateUserRequest request,
+        CancellationToken cancellationToken = default)
     {
         if (!_tenantContext.HasTenant)
         {
             return ResultDto<UserResponse>.Failure(
-                "A tenant context is required.");
+                "A tenant context is required.",
+                ErrorCode.TenantRequired);
         }
 
         var tenantId = _tenantContext.TenantId!.Value;
@@ -66,8 +71,14 @@ public sealed class UserService : IUserService
 
         if (emailExists)
         {
+            _logger.LogWarning(
+                "User creation conflict. Email {Email} already exists for tenant {TenantId}.",
+                request.Email,
+                tenantId);
+
             return ResultDto<UserResponse>.Failure(
-                "A user with this email already exists.");
+                "A user with this email already exists.",
+                ErrorCode.Conflict);
         }
 
         var user = new User
@@ -86,15 +97,20 @@ public sealed class UserService : IUserService
         await _unitOfWork.SaveChangesAsync(
             cancellationToken);
 
+        _logger.LogInformation(
+            "User {UserId} created successfully for tenant {TenantId}.",
+            user.Id,
+            tenantId);
+
         return ResultDto<UserResponse>.Ok(
             user.ToResponse(),
             "User created successfully.");
     }
 
     public async Task<ResultDto<UserResponse>> UpdateAsync(
-    int id,
-    UpdateUserRequest request,
-    CancellationToken cancellationToken = default)
+        int id,
+        UpdateUserRequest request,
+        CancellationToken cancellationToken = default)
     {
         var userRepository =
             _unitOfWork.Repository<User>();
@@ -106,7 +122,8 @@ public sealed class UserService : IUserService
         if (user is null)
         {
             return ResultDto<UserResponse>.Failure(
-                "User not found.");
+                "User not found.",
+                ErrorCode.NotFound);
         }
 
         var emailExists = await userRepository.ExistsAsync(
@@ -116,8 +133,13 @@ public sealed class UserService : IUserService
 
         if (emailExists)
         {
+            _logger.LogWarning(
+                "User update conflict. Email {Email} already exists.",
+                request.Email);
+
             return ResultDto<UserResponse>.Failure(
-                "A user with this email already exists.");
+                "A user with this email already exists.",
+                ErrorCode.Conflict);
         }
 
         user.FullName = request.FullName;
@@ -129,13 +151,18 @@ public sealed class UserService : IUserService
         await _unitOfWork.SaveChangesAsync(
             cancellationToken);
 
+        _logger.LogInformation(
+            "User {UserId} updated successfully.",
+            user.Id);
+
         return ResultDto<UserResponse>.Ok(
             user.ToResponse(),
             "User updated successfully.");
     }
+
     public async Task<ResultDto<bool>> DeleteAsync(
-    int id,
-    CancellationToken cancellationToken = default)
+        int id,
+        CancellationToken cancellationToken = default)
     {
         var userRepository =
             _unitOfWork.Repository<User>();
@@ -147,7 +174,8 @@ public sealed class UserService : IUserService
         if (user is null)
         {
             return ResultDto<bool>.Failure(
-                "User not found.");
+                "User not found.",
+                ErrorCode.NotFound);
         }
 
         user.IsActive = false;
@@ -156,6 +184,10 @@ public sealed class UserService : IUserService
 
         await _unitOfWork.SaveChangesAsync(
             cancellationToken);
+
+        _logger.LogInformation(
+            "User {UserId} soft-deleted successfully.",
+            user.Id);
 
         return ResultDto<bool>.Ok(
             true,
