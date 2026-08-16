@@ -3,11 +3,13 @@ using MiniSaaS.API.Extensions;
 using MiniSaaS.Application.Common.Models;
 using MiniSaaS.Application.Users.DTOs;
 using MiniSaaS.Application.Users.Services;
+using MiniSaaS.Infrastructure.MultiTenancy;
 
 namespace MiniSaaS.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[TenantRequired]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;

@@ -4,6 +4,7 @@ using MiniSaaS.API.Middleware;
 using MiniSaaS.Application;
 using MiniSaaS.Application.Common.Models;
 using MiniSaaS.Infrastructure;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,29 +14,29 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddProblemDetails();
+builder.Services.AddFluentValidationAutoValidation();
+
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
-        options.InvalidModelStateResponseFactory =
-            context =>
-            {
-                var errors = context.ModelState
-                    .Values
-                    .SelectMany(x => x.Errors)
-                    .Select(x => x.ErrorMessage)
-                    .Where(x =>
-                        !string.IsNullOrWhiteSpace(x))
-                    .ToList();
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var errors = context.ModelState
+                .Values
+                .SelectMany(x => x.Errors)
+                .Select(x => x.ErrorMessage)
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .ToList();
 
-                var response = ResultDto<object>.Failure("One or more validation errors occurred.",ErrorCode.Validation, errors);
+            var response = ResultDto<object>.Failure(
+                "One or more validation errors occurred.",
+                ErrorCode.Validation,
+                errors);
 
-                return new BadRequestObjectResult(
-                    response);
-            };
+            return new BadRequestObjectResult(response);
+        };
 
-    }); 
-
-
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

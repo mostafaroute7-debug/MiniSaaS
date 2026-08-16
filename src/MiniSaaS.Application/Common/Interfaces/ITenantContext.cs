@@ -5,4 +5,5 @@ public interface ITenantContext
 {
     int? TenantId { get; }
     bool HasTenant { get; }
+    void SetTenant(int tenantId);
 }
