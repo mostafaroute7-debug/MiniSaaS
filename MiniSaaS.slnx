@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MiniSaaS.API/MiniSaaS.API.csproj" />
+    <Project Path="src/MiniSaaS.Application/MiniSaaS.Application.csproj" />
+    <Project Path="src/MiniSaaS.Domain/MiniSaaS.Domain.csproj" />
+    <Project Path="src/MiniSaaS.Infrastructure/MiniSaaS.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/MiniSaaS.UnitTests/MiniSaaS.UnitTests.csproj" />
+  </Folder>
+</Solution>
