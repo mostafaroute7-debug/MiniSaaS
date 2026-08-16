@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Hangfire;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniSaaS.Application.Common.Interfaces;
+using MiniSaaS.Infrastructure.BackgroundJobs;
 using MiniSaaS.Infrastructure.Identity;
 using MiniSaaS.Infrastructure.MultiTenancy;
 using MiniSaaS.Infrastructure.Persistence.Contexts;
@@ -22,6 +24,19 @@ public static class DependencyInjection
         services.AddScoped<ITenantReader, TenantReader>();
         services.AddScoped<IUnitOfWork, UnitOfWorkImplementation>();
 
+        services.AddScoped<IActiveUsersJob, ActiveUsersJob>();
+
+        services.AddHangfire(config =>
+        {
+            config.UseSimpleAssemblyNameTypeSerializer();
+            config.UseRecommendedSerializerSettings();
+
+            config.UseSqlServerStorage(
+                configuration.GetConnectionString(
+                    "DefaultConnection"));
+        });
+
+        services.AddHangfireServer();
         return services;
     }
 }
