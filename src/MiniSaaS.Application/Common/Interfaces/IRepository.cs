@@ -1,4 +1,4 @@
-﻿using MiniSaaS.Application.Common.Pagination;
+﻿using MiniSaaS.Application.Common.Models;
 using MiniSaaS.Domain.Common;
 using System.Linq.Expressions;
 
@@ -10,7 +10,7 @@ public interface IRepository<T> where T : BaseEntity
 
     Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    Task<PaginationResult<T>> GetPagedAsync(
+    Task<PagedResultDto<T>> GetPagedAsync(
         PaginationRequest request,
         Expression<Func<T, bool>>? predicate = null,
         Expression<Func<T, object>>? orderBy = null,

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MiniSaaS.Application.Common.Interfaces;
-using MiniSaaS.Application.Common.Pagination;
+using MiniSaaS.Application.Common.Models;
 using MiniSaaS.Domain.Common;
 using MiniSaaS.Infrastructure.Persistence.Contexts;
 using System.Linq.Expressions;
@@ -28,12 +28,12 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await DbSet.AsNoTracking().ToListAsync(cancellationToken);
     }
 
-    public async Task<PaginationResult<T>> GetPagedAsync(
-        PaginationRequest request,
-        Expression<Func<T, bool>>? predicate = null,
-        Expression<Func<T, object>>? orderBy = null,
-        bool descending = false,
-        CancellationToken cancellationToken = default)
+    public async Task<PagedResultDto<T>> GetPagedAsync(
+     PaginationRequest request,
+     Expression<Func<T, bool>>? predicate = null,
+     Expression<Func<T, object>>? orderBy = null,
+     bool descending = false,
+     CancellationToken cancellationToken = default)
     {
         IQueryable<T> query = DbSet.AsNoTracking();
 
@@ -44,7 +44,9 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
         if (orderBy is not null)
         {
-            query = descending ? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
+            query = descending
+                ? query.OrderByDescending(orderBy)
+                : query.OrderBy(orderBy);
         }
 
         var totalCount = await query.CountAsync(cancellationToken);
@@ -54,7 +56,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
             .Take(request.PageSize)
             .ToListAsync(cancellationToken);
 
-        return new PaginationResult<T>
+        return new PagedResultDto<T>
         {
             Items = items,
             PageNumber = request.PageNumber,
