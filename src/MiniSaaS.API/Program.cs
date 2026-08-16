@@ -1,10 +1,12 @@
+using FluentValidation.AspNetCore;
+using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using MiniSaaS.API.ExceptionHandling;
 using MiniSaaS.API.Middleware;
 using MiniSaaS.Application;
+using MiniSaaS.Application.Common.Interfaces;
 using MiniSaaS.Application.Common.Models;
 using MiniSaaS.Infrastructure;
-using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +57,12 @@ app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<TenantMiddleware>();
+app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<IActiveUsersJob>(
+    "active-users-per-tenant",
+    job => job.ExecuteAsync(CancellationToken.None),
+    Cron.Minutely);
 app.MapControllers();
 
 app.Run();
