@@ -1,10 +1,9 @@
 ﻿using MiniSaaS.Application.Common.Interfaces;
 using MiniSaaS.Infrastructure.MultiTenancy;
 
-
 namespace MiniSaaS.API.Middleware;
 
-public class TenantMiddleware
+public sealed class TenantMiddleware
 {
     private const string TenantHeader = "X-Tenant-Id";
 
@@ -17,7 +16,7 @@ public class TenantMiddleware
 
     public async Task InvokeAsync(
         HttpContext context,
-        ITenantContextAccessor tenantContextAccessor,
+        ITenantContext tenantContext,
         ITenantReader tenantReader)
     {
         var endpoint = context.GetEndpoint();
@@ -72,7 +71,7 @@ public class TenantMiddleware
             return;
         }
 
-        tenantContextAccessor.SetTenant(tenantId);
+        tenantContext.SetTenant(tenantId);
 
         await _next(context);
     }
@@ -87,6 +86,7 @@ public class TenantMiddleware
 
         await context.Response.WriteAsJsonAsync(new
         {
+            success = false,
             statusCode,
             message
         });
