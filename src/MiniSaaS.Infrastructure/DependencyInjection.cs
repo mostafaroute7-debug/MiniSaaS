@@ -8,6 +8,8 @@ using MiniSaaS.Infrastructure.Identity;
 using MiniSaaS.Infrastructure.MultiTenancy;
 using MiniSaaS.Infrastructure.Persistence.Contexts;
 using UnitOfWorkImplementation = MiniSaaS.Infrastructure.UnitOfWork.UnitOfWork;
+using Microsoft.Extensions.Options;
+using MiniSaaS.Infrastructure.Authentication;
 namespace MiniSaaS.Infrastructure;
 
 public static class DependencyInjection
@@ -37,6 +39,13 @@ public static class DependencyInjection
         });
 
         services.AddHangfireServer();
+
+        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+
+        services.AddScoped<ITokenService,JwtTokenService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+
+        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
         return services;
     }
 }

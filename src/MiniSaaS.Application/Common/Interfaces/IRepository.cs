@@ -24,4 +24,6 @@ public interface IRepository<T> where T : BaseEntity
     void Remove(T entity);
 
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate,CancellationToken cancellationToken = default);
+    Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate,CancellationToken cancellationToken = default);
+
 }
