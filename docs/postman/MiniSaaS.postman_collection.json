@@ -1,0 +1,400 @@
+{
+  "info": {
+    "_postman_id": "75457b3a-7fe1-4e8d-a998-b3aff4b101a2",
+    "name": "MiniSaaS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "30631101"
+  },
+  "item": [
+    {
+      "name": "Tenants",
+      "item": [
+        {
+          "name": "Add Tenant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Globex Corporation\",\r\n  \"slug\": \"globex\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseUrl}}/api/tenants",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tenant",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseUrl}}/api/tenants/1",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenants",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Not Found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BaseUrl}}/api/tenants/9999",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenants",
+                "9999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Conflict",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"Another Acme\",\r\n  \"slug\": \"acme\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseUrl}}/api/tenants",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenants"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test Validation",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"name\": \"\",\r\n  \"slug\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseUrl}}/api/tenants",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tenants"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Add User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Tenant-Id",
+                "value": "6"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Omar Ali\",\r\n  \"email\": \"Omar@acme.com\",\r\n  \"role\": 1,\r\n  \"password\":\"Mos@472002\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseUrl}}/api/users",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Tenant-Id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{BaseUrl}}/api/users?pageNumber=1&pageSize=10",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "pageNumber",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-Tenant-Id",
+                "value": "1"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Ahmed Ali Updated\",\r\n  \"email\": \"ahmed.updated@acme.com\",\r\n  \"role\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseUrl}}/api/users/1",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-Tenant-Id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{BaseUrl}}/api/users/1",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validation Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Tenant-Id",
+                "value": "1"
+              },
+              {
+                "key": "Content-Typ",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"\",\r\n  \"email\": \"\",\r\n  \"role\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseUrl}}/api/users",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Conflict Test",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Tenant-Id",
+                "value": "1"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Test User\",\r\n  \"email\": \"test@acme.com\",\r\n  \"role\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseUrl}}/api/users",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Tenant-Id",
+                "value": "6"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"Omar@acme.com\",\r\n  \"password\": \"Mos@472002\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BaseUrl}}/api/auth/login",
+              "host": [
+                "{{BaseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BaseUrl",
+      "value": ""
+    }
+  ]
+}
