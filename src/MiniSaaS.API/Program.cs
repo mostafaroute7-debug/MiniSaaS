@@ -25,6 +25,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddFluentValidationAutoValidation();
 
+
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
