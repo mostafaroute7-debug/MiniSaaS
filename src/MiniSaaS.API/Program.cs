@@ -3,6 +3,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using MiniSaaS.API.ExceptionHandling;
 using MiniSaaS.API.Middleware;
 using MiniSaaS.Application;
@@ -11,6 +12,7 @@ using MiniSaaS.Application.Common.Models;
 using MiniSaaS.Infrastructure;
 using MiniSaaS.Infrastructure.Authentication;
 using MiniSaaS.Infrastructure.Persistence.Seed;
+
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,7 +47,25 @@ builder.Services.AddControllers()
 
     });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token."
+    });
+
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] =
+                new List<string>()
+        });
+});
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -86,7 +106,7 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseMiddleware<CorrelationIdMiddleware>();
-
+app.UseMiddleware<TenantMiddleware>();
 app.UseHangfireDashboard("/hangfire");
 
 RecurringJob.AddOrUpdate<IActiveUsersJob>(
@@ -95,7 +115,7 @@ RecurringJob.AddOrUpdate<IActiveUsersJob>(
     Cron.Minutely);
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<TenantMiddleware>();
+
 app.MapControllers();
 
 app.Run();
