@@ -75,3 +75,22 @@ MiniSaaS
         ├── API
         └── Services
 
+## API Documentation
+
+### Swagger
+
+When the application is running:
+
+https://localhost:7093/swagger
+
+### Postman
+
+The Postman collection is available at:
+
+`docs/postman/MiniSaaS.postman_collection.json`
+
+Import the collection into Postman and configure:
+
+- `baseUrl`
+- `tenantId`
+- `token`
