@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MiniSaaS.API.Extensions;
 using MiniSaaS.Application.Common.Models;
 using MiniSaaS.Application.Users.DTOs;
@@ -10,6 +11,7 @@ namespace MiniSaaS.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [TenantRequired]
+[Authorize]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;

@@ -11,4 +11,5 @@ public class User : BaseEntity
     public bool IsActive { get; set; } = true;
     public int TenantId { get; set; }
     public Tenant Tenant { get; set; } = null!;
+    public string PasswordHash { get; set; } = string.Empty;
 }

@@ -12,15 +12,18 @@ public sealed class UserService : IUserService
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITenantContext _tenantContext;
     private readonly ILogger<UserService> _logger;
+    private readonly IPasswordHasher _passwordHasher;
 
     public UserService(
         IUnitOfWork unitOfWork,
         ITenantContext tenantContext,
-        ILogger<UserService> logger)
+        ILogger<UserService> logger,
+        IPasswordHasher passwordHasher)
     {
         _unitOfWork = unitOfWork;
         _tenantContext = tenantContext;
         _logger = logger;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<ResultDto<PagedResultDto<UserResponse>>> GetAllAsync(
@@ -50,8 +53,8 @@ public sealed class UserService : IUserService
     }
 
     public async Task<ResultDto<UserResponse>> CreateAsync(
-        CreateUserRequest request,
-        CancellationToken cancellationToken = default)
+     CreateUserRequest request,
+     CancellationToken cancellationToken = default)
     {
         if (!_tenantContext.HasTenant)
         {
@@ -81,11 +84,15 @@ public sealed class UserService : IUserService
                 ErrorCode.Conflict);
         }
 
+        var passwordHash = _passwordHasher.Hash(
+            request.Password);
+
         var user = new User
         {
             TenantId = tenantId,
             FullName = request.FullName,
             Email = request.Email,
+            PasswordHash = passwordHash,
             Role = request.Role,
             IsActive = true
         };

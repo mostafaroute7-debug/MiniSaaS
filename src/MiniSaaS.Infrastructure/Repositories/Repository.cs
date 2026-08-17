@@ -80,10 +80,13 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         DbSet.Remove(entity);
     }
 
-    public async Task<bool> ExistsAsync(
-        Expression<Func<T, bool>> predicate,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate,CancellationToken cancellationToken = default)
     {
         return await DbSet.AnyAsync(predicate, cancellationToken);
+    }
+
+    public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate,CancellationToken cancellationToken = default)
+    {
+        return await DbSet .FirstOrDefaultAsync(predicate,cancellationToken);
     }
 }

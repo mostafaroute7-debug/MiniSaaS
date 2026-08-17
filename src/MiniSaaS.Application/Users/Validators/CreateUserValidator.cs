@@ -23,6 +23,13 @@ public sealed class CreateUserValidator : AbstractValidator<CreateUserRequest>
             .MaximumLength(255)
             .WithMessage("User email must not exceed 255 characters.");
 
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .WithMessage("Password is required.")
+            .MinimumLength(8)
+            .WithMessage("Password must be at least 8 characters long.");
+
         RuleFor(x => x.Role)
             .IsInEnum()
             .WithMessage("Invalid user role.");

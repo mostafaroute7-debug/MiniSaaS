@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using FluentValidation;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
+using MiniSaaS.Application.Auth.Services;
+using MiniSaaS.Application.Common.Interfaces;
 using MiniSaaS.Application.Tenants.Services;
 using MiniSaaS.Application.Users.Services;
 namespace MiniSaaS.Application;
@@ -14,6 +16,7 @@ public static class DependencyInjection
 
         services.AddScoped<IUserService,UserService>();
 
+        services.AddScoped<IAuthService, AuthService>();
         return services;
     }
 }
