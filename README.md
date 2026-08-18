@@ -1223,36 +1223,6 @@ Possible future enhancements include:
 
 ---
 
-# 📁 Repository Structure
-
-```text
-MiniSaaS/
-│
-├── src/
-│   │
-│   ├── MiniSaaS.Domain/
-│   │
-│   ├── MiniSaaS.Application/
-│   │
-│   ├── MiniSaaS.Infrastructure/
-│   │
-│   └── MiniSaaS.API/
-│
-├── tests/
-│   │
-│   ├── MiniSaaS.Application.Tests/
-│   │
-│   └── MiniSaaS.API.Tests/
-│
-├── docs/
-│   └── MiniSaaS.postman_collection.json
-│
-├── README.md
-└── MiniSaaS.sln
-```
-
----
-
 # 🔑 Example Credentials
 
 For local development only:
@@ -1289,17 +1259,28 @@ This project is intended for **learning, demonstration, and portfolio purposes**
 
 ---
 
-# 👨‍💻 Author
+## 👨‍💻 Author
 
-Built as a backend SaaS architecture project using modern **ASP.NET Core** technologies, focusing on:
+**Mostafa Hany**
 
-* Clean Architecture
-* Multi-Tenancy
-* Secure Authentication
-* Scalable Backend Design
-* Background Processing
-* Validation
-* Testing
-* Maintainable Code
+.NET Developer | Backend Developer
+
+* GitHub: `https://github.com/mostafaroute7-debug`
+* LinkedIn: `www.linkedin.com/in/mostafa-hany-43b294232`
+
+
+---
+
+# ⚙️ Getting Started
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/mostafaroute7-debug/MiniSaaS.git
+```
+
+```bash
+cd CustomerOrderManagement
+```
 
 ---
