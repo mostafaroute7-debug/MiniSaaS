@@ -7,8 +7,7 @@ namespace MiniSaaS.Application.Common.Mapping;
 
 public static class MappingExtensions
 {
-    public static TenantResponse ToResponse(
-       this Tenant tenant)
+    public static TenantResponse ToResponse(this Tenant tenant)
     {
         return new TenantResponse
         {

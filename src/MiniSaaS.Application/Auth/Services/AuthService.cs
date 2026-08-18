@@ -20,63 +20,39 @@ public sealed class AuthService : IAuthService
         _tenantContext = tenantContext;
     }
 
-    public async Task<ResultDto<AuthResponse>> LoginAsync(
-        LoginRequest request,
-        CancellationToken cancellationToken = default)
+    public async Task<ResultDto<AuthResponse>> LoginAsync(LoginRequest request,CancellationToken cancellationToken = default)
     {
         if (!_tenantContext.HasTenant)
         {
-            return ResultDto<AuthResponse>.Failure(
-                "A tenant context is required.",
-                ErrorCode.TenantRequired);
+            return ResultDto<AuthResponse>.Failure( "A tenant context is required.",ErrorCode.TenantRequired);
         }
 
         var tenantId = _tenantContext.TenantId!.Value;
 
-        var userRepository =
-            _unitOfWork.Repository<User>();
+        var userRepository =_unitOfWork.Repository<User>();
 
-        var user = await userRepository.FirstOrDefaultAsync(
-            x =>
-                x.Email == request.Email &&
-                x.IsActive,
-            cancellationToken);
+        var user = await userRepository.FirstOrDefaultAsync(x =>x.Email == request.Email &&x.IsActive,cancellationToken);
 
         if (user is null)
         {
-            return ResultDto<AuthResponse>.Failure(
-                "Invalid email or password.",
-                ErrorCode.Unauthorized);
+            return ResultDto<AuthResponse>.Failure( "Invalid email or password.", ErrorCode.Unauthorized);
         }
 
-        var passwordValid =
-            _passwordHasher.Verify(
-                request.Password,
-                user.PasswordHash);
+        var passwordValid = _passwordHasher.Verify(request.Password,user.PasswordHash);
 
         if (!passwordValid)
         {
-            return ResultDto<AuthResponse>.Failure(
-                "Invalid email or password.",
-                ErrorCode.Unauthorized);
+            return ResultDto<AuthResponse>.Failure( "Invalid email or password.", ErrorCode.Unauthorized);
         }
 
-        var token =
-            _jwtTokenService.GenerateToken(
-                user.Id,
-                tenantId,
-                user.Email,
-                user.Role.ToString());
+        var token =_jwtTokenService.GenerateToken(user.Id,tenantId,user.Email,user.Role.ToString());
 
-        var expiresAt =
-            DateTime.UtcNow.AddMinutes(60);
+        var expiresAt = DateTime.UtcNow.AddMinutes(60);
 
-        return ResultDto<AuthResponse>.Ok(
-            new AuthResponse
+        return ResultDto<AuthResponse>.Ok(new AuthResponse
             {
                 AccessToken = token,
                 ExpiresAt = expiresAt
-            },
-            "Login successful.");
+            },"Login successful.");
     }
 }

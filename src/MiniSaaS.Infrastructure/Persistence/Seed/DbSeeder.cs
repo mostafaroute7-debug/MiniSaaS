@@ -14,19 +14,11 @@ public static class DbSeeder
         IPasswordHasher passwordHasher,
         CancellationToken cancellationToken = default)
     {
-        // Apply migrations
-        await context.Database.MigrateAsync(
-            cancellationToken);
 
-        // ==========================================
-        // Seed Tenant
-        // ==========================================
+        await context.Database.MigrateAsync(cancellationToken);
 
-        var tenant = await context.Tenants
-            .IgnoreQueryFilters()
-            .FirstOrDefaultAsync(
-                x => x.Slug == "demo-tenant",
-                cancellationToken);
+
+        var tenant = await context.Tenants.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Slug == "demo-tenant",cancellationToken);
 
         if (tenant is null)
         {
@@ -37,25 +29,12 @@ public static class DbSeeder
                 IsActive = true
             };
 
-            await context.Tenants.AddAsync(
-                tenant,
-                cancellationToken);
+            await context.Tenants.AddAsync(tenant,cancellationToken);
 
-            await context.SaveChangesAsync(
-                cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
-        // ==========================================
-        // Seed Admin User
-        // ==========================================
-
-        var adminExists = await context.Users
-            .IgnoreQueryFilters()
-            .AnyAsync(
-                x =>
-                    x.Email == "admin@minisaas.com" &&
-                    x.TenantId == tenant.Id,
-                cancellationToken);
+        var adminExists = await context.Users.IgnoreQueryFilters().AnyAsync(x =>x.Email == "admin@minisaas.com" &&x.TenantId == tenant.Id, cancellationToken);
 
         if (!adminExists)
         {
@@ -64,19 +43,14 @@ public static class DbSeeder
                 TenantId = tenant.Id,
                 FullName = "System Admin",
                 Email = "admin@minisaas.com",
-                PasswordHash =
-                    passwordHasher.Hash(
-                        "Admin@123456"),
+                PasswordHash = passwordHasher.Hash( "Admin@123456"),
                 Role = UserRole.Admin,
                 IsActive = true
             };
 
-            await context.Users.AddAsync(
-                adminUser,
-                cancellationToken);
+            await context.Users.AddAsync(adminUser,cancellationToken);
 
-            await context.SaveChangesAsync(
-                cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
         }
     }
 }

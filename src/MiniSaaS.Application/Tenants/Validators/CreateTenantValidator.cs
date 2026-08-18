@@ -22,8 +22,7 @@ public sealed class CreateTenantValidator : AbstractValidator<CreateTenantReques
 
         RuleFor(x => x.Slug)
             .Matches("^[a-z0-9]+(?:-[a-z0-9]+)*$")
-            .WithMessage(
-                "Tenant slug can contain lowercase letters, numbers and hyphens only.")
+            .WithMessage("Tenant slug can contain lowercase letters, numbers and hyphens only.")
             .When(x => !string.IsNullOrWhiteSpace(x.Slug));
     }
 }
