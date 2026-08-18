@@ -44,9 +44,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
         if (orderBy is not null)
         {
-            query = descending
-                ? query.OrderByDescending(orderBy)
-                : query.OrderBy(orderBy);
+            query = descending? query.OrderByDescending(orderBy) : query.OrderBy(orderBy);
         }
 
         var totalCount = await query.CountAsync(cancellationToken);

@@ -31,17 +31,13 @@ builder.Services.AddControllers()
     {
         options.InvalidModelStateResponseFactory = context =>
         {
-            var errors = context.ModelState
-                .Values
+            var errors = context.ModelState.Values
                 .SelectMany(x => x.Errors)
                 .Select(x => x.ErrorMessage)
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToList();
 
-            var response = ResultDto<object>.Failure(
-                "One or more validation errors occurred.",
-                ErrorCode.Validation,
-                errors);
+            var response = ResultDto<object>.Failure("One or more validation errors occurred.",ErrorCode.Validation,errors);
 
             return new BadRequestObjectResult(response);
         };

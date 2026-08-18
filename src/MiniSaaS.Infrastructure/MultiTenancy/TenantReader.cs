@@ -14,14 +14,8 @@ public class TenantReader : ITenantReader
         _dbContext = dbContext;
     }
 
-    public Task<bool> ExistsAndIsActiveAsync(
-        int tenantId,
-        CancellationToken cancellationToken = default)
+    public Task<bool> ExistsAndIsActiveAsync(int tenantId,CancellationToken cancellationToken = default)
     {
-        return _dbContext.Tenants
-            .AsNoTracking()
-            .AnyAsync(
-                x => x.Id == tenantId && x.IsActive,
-                cancellationToken);
+        return _dbContext.Tenants.AsNoTracking().AnyAsync(x => x.Id == tenantId && x.IsActive,cancellationToken);
     }
 }

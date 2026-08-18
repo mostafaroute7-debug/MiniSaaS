@@ -7,8 +7,7 @@ public sealed class TenantContext : ITenantContext
 {
     public int? TenantId { get; private set; }
 
-    public bool HasTenant =>
-        TenantId.HasValue;
+    public bool HasTenant => TenantId.HasValue;
 
     public void SetTenant(int tenantId)
     {

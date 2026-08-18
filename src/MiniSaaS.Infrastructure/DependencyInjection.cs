@@ -8,7 +8,6 @@ using MiniSaaS.Infrastructure.Identity;
 using MiniSaaS.Infrastructure.MultiTenancy;
 using MiniSaaS.Infrastructure.Persistence.Contexts;
 using UnitOfWorkImplementation = MiniSaaS.Infrastructure.UnitOfWork.UnitOfWork;
-using Microsoft.Extensions.Options;
 using MiniSaaS.Infrastructure.Authentication;
 namespace MiniSaaS.Infrastructure;
 
@@ -16,9 +15,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
     {
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(
-                configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<ITenantContext, TenantContext>();
 
@@ -33,9 +30,7 @@ public static class DependencyInjection
             config.UseSimpleAssemblyNameTypeSerializer();
             config.UseRecommendedSerializerSettings();
 
-            config.UseSqlServerStorage(
-                configuration.GetConnectionString(
-                    "DefaultConnection"));
+            config.UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection"));
         });
 
         services.AddHangfireServer();

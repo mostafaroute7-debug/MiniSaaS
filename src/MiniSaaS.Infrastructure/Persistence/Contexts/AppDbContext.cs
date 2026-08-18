@@ -11,8 +11,7 @@ public class AppDbContext : DbContext
     private readonly ICurrentUserService _currentUserService;
     private readonly ITenantContext _tenantContext;
 
-    public AppDbContext(DbContextOptions<AppDbContext> options,ICurrentUserService currentUserService,
-                                ITenantContext tenantContext) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options,ICurrentUserService currentUserService,ITenantContext tenantContext) : base(options)
     {
         _currentUserService =  currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
 
@@ -22,10 +21,7 @@ public class AppDbContext : DbContext
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        modelBuilder.Entity<User>()
-         .HasQueryFilter(x =>
-             x.TenantId == _tenantContext.TenantId &&
-             x.IsActive);
+        modelBuilder.Entity<User>().HasQueryFilter(x =>x.TenantId == _tenantContext.TenantId &&x.IsActive);
 
         base.OnModelCreating(modelBuilder);
     }

@@ -14,16 +14,11 @@ public sealed class TenantMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(
-        HttpContext context,
-        ITenantContext tenantContext,
-        ITenantReader tenantReader)
+    public async Task InvokeAsync(HttpContext context,ITenantContext tenantContext, ITenantReader tenantReader)
     {
         var endpoint = context.GetEndpoint();
 
-        var requiresTenant =
-            endpoint?.Metadata.GetMetadata<TenantRequiredAttribute>()
-            is not null;
+        var requiresTenant =endpoint?.Metadata.GetMetadata<TenantRequiredAttribute>()is not null;
 
         if (!requiresTenant)
         {
@@ -31,42 +26,25 @@ public sealed class TenantMiddleware
             return;
         }
 
-        if (!context.Request.Headers.TryGetValue(
-                TenantHeader,
-                out var tenantHeader))
+        if (!context.Request.Headers.TryGetValue(TenantHeader,out var tenantHeader))
         {
-            await WriteErrorAsync(
-                context,
-                StatusCodes.Status400BadRequest,
-                "Tenant header is required.");
+            await WriteErrorAsync(context,StatusCodes.Status400BadRequest,"Tenant header is required.");
 
             return;
         }
 
-        if (!int.TryParse(
-                tenantHeader.ToString(),
-                out var tenantId) ||
-            tenantId <= 0)
+        if (!int.TryParse(tenantHeader.ToString(),out var tenantId) ||tenantId <= 0)
         {
-            await WriteErrorAsync(
-                context,
-                StatusCodes.Status400BadRequest,
-                "Tenant ID must be a valid positive integer.");
+            await WriteErrorAsync(context,StatusCodes.Status400BadRequest,"Tenant ID must be a valid positive integer.");
 
             return;
         }
 
-        var tenantExists =
-            await tenantReader.ExistsAndIsActiveAsync(
-                tenantId,
-                context.RequestAborted);
+        var tenantExists =await tenantReader.ExistsAndIsActiveAsync(tenantId,context.RequestAborted);
 
         if (!tenantExists)
         {
-            await WriteErrorAsync(
-                context,
-                StatusCodes.Status404NotFound,
-                "Tenant was not found or is inactive.");
+            await WriteErrorAsync(context,StatusCodes.Status404NotFound,"Tenant was not found or is inactive.");
 
             return;
         }
@@ -76,10 +54,7 @@ public sealed class TenantMiddleware
         await _next(context);
     }
 
-    private static async Task WriteErrorAsync(
-        HttpContext context,
-        int statusCode,
-        string message)
+    private static async Task WriteErrorAsync(HttpContext context,int statusCode,string message)
     {
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
