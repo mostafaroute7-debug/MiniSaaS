@@ -358,7 +358,7 @@
             "header": [
               {
                 "key": "X-Tenant-Id",
-                "value": "6"
+                "value": "1"
               },
               {
                 "key": "Content-Type",
