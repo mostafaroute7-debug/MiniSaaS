@@ -9,13 +9,15 @@ namespace MiniSaaS.Infrastructure.Persistence.Seed;
 
 public static class DbSeeder
 {
-    public static async Task SeedAsync(
-        AppDbContext context,
-        IPasswordHasher passwordHasher,
-        CancellationToken cancellationToken = default)
+    public static async Task SeedAsync(AppDbContext context,IPasswordHasher passwordHasher,CancellationToken cancellationToken = default)
     {
-
-        await context.Database.MigrateAsync(cancellationToken);
+        var migrations = await context.Database.GetPendingMigrationsAsync(cancellationToken);
+        var pendingMigrations = migrations.ToList();
+        if (pendingMigrations.Count>0)
+        {
+            await context.Database.MigrateAsync(cancellationToken);
+        }
+            
 
 
         var tenant = await context.Tenants.IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Slug == "demo-tenant",cancellationToken);
